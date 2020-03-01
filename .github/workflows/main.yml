@@ -15,11 +15,19 @@ jobs:
         with:
           path: "stack.yml"
           tag: "sha"
-      - name: Docker Login
-        uses: Azure/docker-login@v1
+      - name: Switch directory
+        run: ls
+        working-directory: './build/abap-fibonacci'
+      - name: Build and publish image
+        uses: ilteoood/docker_buildx@master
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          publish: true
+          imageName: abap-fibonacci
+          dockerHubUser:  ${{secrets.DOCKER_USERNAME}}
+          dockerHubPassword: ${{secrets.DOCKER_PASSWORD}}
+      - name: Switch directory
+        run: ls
+        working-directory: '.'
       - uses: LucasRoesler/openfaas-action/login@v0.1.0
         name: Login
         with:
@@ -27,7 +35,7 @@ jobs:
           username: ${{secrets.OPENFAAS_USERNAME}}
           password: ${{secrets.OPENFAAS_PASSWORD}}
       - name: Publish image
-        if: "success() && github.ref == 'refs/heads/master' "
+        if: "success() && github.ref == 'refs/heads/master' && 1 = 0"
         uses: LucasRoesler/openfaas-action/push@v0.1.0
         with:
           path: "stack.yml"
