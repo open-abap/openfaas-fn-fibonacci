@@ -3,7 +3,7 @@ name: CI
 on: [push]
 
 jobs:
-  build:
+  build-and-deploy:
 
     runs-on: ubuntu-latest
 
@@ -15,14 +15,6 @@ jobs:
         with:
           path: "stack.yml"
           tag: "sha"
-  
-  deploy:
-    needs: [build]
-#    if: github.head_ref.match(/.*master$/)
-    runs-on: [ubuntu-latest]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
       - name: Login to Docker Hub
         uses: actions/docker/login@master
         env:
