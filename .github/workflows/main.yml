@@ -10,11 +10,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Environment
-        run: |
-          echo "Docker username $DOCKER_USERNAME"
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      - name: Get Branch Name and Tag
+        id: tag
+        uses: ypicard/get-branch-name-github-action@v1
       - name: Install OpenFaaS CLI
         run: |
           curl -sSL https://cli.openfaas.com | sudo sh
@@ -25,22 +23,16 @@ jobs:
           version: latest
       - name: Available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
-      - name: Make buildx default builder
+      - name: Build multiplatform and push
+        working-directory: './build/abap-fibonacci/'
         run: |
-          docker buildx install
-      - name: Build
-        run: |
-          faas-cli build -f stack.yml --tag sha --build-option platform=linux/amd64,linux/arm/v7 --build-option push
+          docker build buildx --platform=linux/amd64,linux/arm/v7 --image=mrsimpson/abap-fibonacci':${{ steps.tag.outputs.tag }} --push
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-      - uses: LucasRoesler/openfaas-action/login@v0.1.0
-        name: Login to OpenFaaS
-        with:
-          gateway: ${{ secrets.OPENFAAS_GATEWAY }}
-          username: ${{ secrets.OPENFAAS_USERNAME }}
-          password: ${{ secrets.OPENFAAS_PASSWORD }}
-      - uses: LucasRoesler/openfaas-action/cli@v0.1.0
+      - name: Login to OpenFaaS
+        run: |
+          echo ${{ secrets.OPENFAAS_PASSWORD }} | faas-cli login --gateway ${{ secrets.OPENFAAS_GATEWAY }} -u ${{ secrets.OPENFAAS_USERNAME }} --password-stdin
+      - name: deploy
         if: success() && github.ref == 'refs/heads/master'
-        name: deploy
-        with:
-          args: deploy -g ${{ secrets.OPENFAAS_GATEWAY }} --tag sha
+        run: |
+          faas-cli deploy -g ${{ secrets.OPENFAAS_GATEWAY }} --tag sha
