@@ -19,11 +19,13 @@ jobs:
         run: |
           curl -sSL https://cli.openfaas.com | sudo sh
       - name: Set up Docker Buildx
+        if: 1 == 0
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           version: latest
       - name: Available platforms
+        if: 1 == 0
         run: echo ${{ steps.buildx.outputs.platforms }}
       - name: Make buildx default builder
         if: 1 == 0
@@ -31,8 +33,8 @@ jobs:
           docker buildx install
       - name: Build
         run: |
-          faas-cli build \
-          -f stack.yml \ 
+          faas-cli build
+          -f stack.yml
           --tag sha
  #         --build-option platform=linux/amd64,linux/arm/v7 \
  #         --build-option push \
