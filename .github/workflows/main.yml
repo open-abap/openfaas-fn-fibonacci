@@ -25,7 +25,7 @@ jobs:
         run: echo ${{ steps.buildx.outputs.platforms }}
       - name: Prepare image build
         run: |
-          echo "::set-env name=TAG::$(faas-cli build --shrinkwrap --tag sha | grep -i building | sed 's/.*://' | cut -f1 -d ' ')"
+          echo "::set-env name=TAG::$(faas-cli build --shrinkwrap --tag sha | grep -i building | sed 's/.*://' | cut -f1 -d ' ' | sed -n 2p)"
       - name: Build multiplatform and push
         working-directory: './build/abap-fibonacci/'
         run: |
