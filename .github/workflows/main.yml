@@ -39,9 +39,6 @@ jobs:
           docker version && \
           echo ${{ steps.buildx.outputs.platforms }} && \
           docker build --platform linux/amd64,linux/arm/v7 -t $DOCKER_REPO/$DOCKER_IMAGE:$TAG --push .
-      - name: Push
-        run: |
-          faas-cli push --tag sha
       - name: Login to OpenFaaS
         run: |
           echo ${{ secrets.OPENFAAS_PASSWORD }} | faas-cli login --gateway ${{ secrets.OPENFAAS_GATEWAY }} -u ${{ secrets.OPENFAAS_USERNAME }} --password-stdin
