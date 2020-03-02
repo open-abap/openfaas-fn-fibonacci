@@ -3,6 +3,7 @@ name: CI
 on: [push]
 env:
   IMAGE: mrsimpson/abap-fibonacci
+  DOCKER_CLI_EXPERIMENTAL: enabled
   TAG: ''
 
 jobs:
