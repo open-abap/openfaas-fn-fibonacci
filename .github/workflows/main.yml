@@ -26,24 +26,22 @@ jobs:
           path: "stack.yml"
           buildArg: --platform=linux/amd64,linux/arm/v7
           tag: "sha"
-      - name: Docker Login
-        uses: actions/docker/login
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Publish image
         uses: LucasRoesler/openfaas-action/push@v0.1.0
         with:
           path: "stack.yml"
           tag: "sha"
       - uses: LucasRoesler/openfaas-action/login@v0.1.0
-        name: OpenFaaS Login
+        if: ${{secrets.OPENFAAS_GATEWAY}}
+        name: Login to OpenFaaS
         with:
           gateway: ${{secrets.OPENFAAS_GATEWAY}}
           username: ${{secrets.OPENFAAS_USERNAME}}
           password: ${{secrets.OPENFAAS_PASSWORD}}
       - uses: LucasRoesler/openfaas-action/cli@v0.1.0
-        if: "success() && github.ref == 'refs/heads/master'"
+        if: "${{secrets.OPENFAAS_GATEWAY}} && success() && github.ref == 'refs/heads/master'"
         name: deploy
         with:
           args: deploy -g ${{secrets.OPENFAAS_GATEWAY}} --tag sha
