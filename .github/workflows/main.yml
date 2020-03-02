@@ -30,6 +30,7 @@ jobs:
       - name: Build multiplatform and push
         working-directory: './build/abap-fibonacci/'
         run: |
+          docker version && \
           docker buildx create --name multi --use && \
           docker build buildx --platform=linux/amd64,linux/arm/v7 --image=mrsimpson/abap-fibonacci:$TAG --push
       - name: Login to DockerHub Registry
