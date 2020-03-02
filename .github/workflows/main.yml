@@ -10,9 +10,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Current Branch
-        id: getBranch
-        uses: ryolambert/current-branch@v1.0
       - name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
@@ -41,7 +38,7 @@ jobs:
           path: "stack.yml"
           tag: "sha"
       - uses: LucasRoesler/openfaas-action/cli@v0.1.0
-        if: "success() && ${{ steps.getBranch.outputs.branch }} == master"
+        if: "success() && github.ref == 'refs/heads/master'"
         name: deploy
         with:
           args: deploy -g ${{secrets.OPENFAAS_GATEWAY}} --tag sha
