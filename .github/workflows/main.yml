@@ -41,7 +41,7 @@ jobs:
           username: ${{secrets.OPENFAAS_USERNAME}}
           password: ${{secrets.OPENFAAS_PASSWORD}}
       - uses: LucasRoesler/openfaas-action/cli@v0.1.0
-        if: "${{secrets.OPENFAAS_GATEWAY}} != '' && success() && github.ref == 'refs/heads/master'"
+        if: ${{secrets.OPENFAAS_GATEWAY}} != '' && success() && github.ref == 'refs/heads/master'
         name: deploy
         with:
           args: deploy -g ${{secrets.OPENFAAS_GATEWAY}} --tag sha
