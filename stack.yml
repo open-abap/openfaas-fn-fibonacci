@@ -6,5 +6,5 @@ functions:
   abap-fibonacci:
     lang: open-abap
     handler: .
-    image: mrsimpson/abap-fibonacci:latest
+    image: open-abap/abap-fibonacci:latest
 
