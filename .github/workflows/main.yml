@@ -17,7 +17,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       - name: Install OpenFaaS CLI
         run: |
-          curl -sSL https://cli.openfaas.com | sh
+          curl -sSL https://cli.openfaas.com | sudo sh
       - name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
