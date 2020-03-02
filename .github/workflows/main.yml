@@ -26,6 +26,7 @@ jobs:
       - name: Available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
       - name: Make buildx default builder
+        if: 1 == 0
         run: |
           docker buildx install
       - name: Build
