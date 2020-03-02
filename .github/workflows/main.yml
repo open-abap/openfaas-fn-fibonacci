@@ -38,7 +38,7 @@ jobs:
         run: |
           docker version && \
           echo ${{ steps.buildx.outputs.platforms }} && \
-          docker build --platform linux/amd64,linux/arm/v7 -t $DOCKER_IMAGE:$TAG --load .
+          docker build --platform linux/amd64,linux/arm/v7 -t $DOCKER_IMAGE:$TAG -o image,push .
       - name: Push
         run: |
           faas-cli push --tag sha
