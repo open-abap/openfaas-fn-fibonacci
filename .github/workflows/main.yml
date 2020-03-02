@@ -1,6 +1,11 @@
 name: CI
 
 on: [push]
+env:
+  DOCKER_REPO: mrsimpson
+  DOCKER_IMAGE: abap-fibonacci
+  DOCKER_CLI_EXPERIMENTAL: enabled
+  TAG: ''
 
 jobs:
   build-and-deploy:
@@ -10,32 +15,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build
-        uses: LucasRoesler/openfaas-action/build@v0.1.0
+      - name: Install OpenFaaS CLI
+        run: |
+          curl -sSL https://cli.openfaas.com | sudo sh
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
         with:
-          path: "stack.yml"
-          tag: "sha"
-      - name: Docker Login
-        uses: Azure/docker-login@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - uses: LucasRoesler/openfaas-action/login@v0.1.0
-        name: Login
-        with:
-          gateway: ${{secrets.OPENFAAS_GATEWAY}}
-          username: ${{secrets.OPENFAAS_USERNAME}}
-          password: ${{secrets.OPENFAAS_PASSWORD}}
-      - name: Publish image
-        if: "success() && github.ref == 'refs/heads/master' "
-        uses: LucasRoesler/openfaas-action/push@v0.1.0
-        with:
-          path: "stack.yml"
-          tag: "sha"
-      - uses: LucasRoesler/openfaas-action/cli@v0.1.0
-        if: "success() && github.ref == 'refs/heads/master' && 1 == 0 "
-        name: deploy
-        with:
-          args: deploy -g ${{secrets.OPENFAAS_GATEWAY}} --tag sha
-
-
+          version: latest
+      - name: Install buildx as default
+        run: |
+          docker buildx install
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Prepare image build
+        run: |
+          echo "::set-env name=TAG::$(faas-cli build --shrinkwrap --tag sha | grep -i building | sed "s/.*$IMAGE://" | cut -f1 -d" " | sed -n 2p)"
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - name: Build multi platform
+        working-directory: './build/abap-fibonacci/'
+        run: |
+          docker version && \
+          echo ${{ steps.buildx.outputs.platforms }} && \
+          docker build --platform linux/amd64,linux/arm/v7 -t $DOCKER_REPO/$DOCKER_IMAGE:$TAG --push .
+      - name: Login to OpenFaaS
+        run: |
+          echo ${{ secrets.OPENFAAS_PASSWORD }} | faas-cli login --gateway ${{ secrets.OPENFAAS_GATEWAY }} -u ${{ secrets.OPENFAAS_USERNAME }} --password-stdin
+      - name: deploy
+        if: success() && github.ref == 'refs/heads/master'
+        run: |
+          faas-cli deploy -g ${{ secrets.OPENFAAS_GATEWAY }} --tag sha
