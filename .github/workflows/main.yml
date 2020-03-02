@@ -10,6 +10,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Environment
+        run: |
+          echo "Docker username ${{ secrets.DOCKER_USERNAME }}"
       - name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
@@ -21,7 +24,7 @@ jobs:
         run: |
           docker buildx install
       - name: Build
-        uses: LucasRoesler/openfaas-action/build@v0.1.0
+        uses: open-abap/openfaas-action/build@v0.1.0
         with:
           path: "stack.yml"
           buildArg: --platform=linux/amd64,linux/arm/v7
