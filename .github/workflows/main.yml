@@ -15,11 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install OpenFaaS CLI
-        run: |
-          curl -sSL https://cli.openfaas.com | sudo sh
       - name: OpenFaaS build and push
-        uses: mrsimpson/action-openfaas-build@0.1.0
+        uses: mrsimpson/action-openfaas-build@456b3fc
         with:
           # The OpenFaaS function definition file
           stack-file: stack.yml
@@ -29,6 +26,9 @@ jobs:
           docker-password: ${{ secrets.DOCKER_PASSWORD }}
           # the platform abbreviations to build for, e. g. linux/amd64,linux/arm/v7
           platforms: linux/amd64,linux/arm/v7
+      - name: Install OpenFaaS CLI
+        run: |
+          curl -sSL https://cli.openfaas.com | sudo sh
       - name: Login to OpenFaaS
         run: |
           echo ${{ secrets.OPENFAAS_PASSWORD }} | faas-cli login --gateway ${{ secrets.OPENFAAS_GATEWAY }} -u ${{ secrets.OPENFAAS_USERNAME }} --password-stdin
