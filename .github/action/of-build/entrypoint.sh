@@ -40,10 +40,7 @@ echo $3 | docker login -u $2 --password-stdin $REGISTRY
 
 cd "build/$(ls build | sed -n p)"
 docker buildx create --driver docker-container --use
-docker buildx inspect --bootstrap
-update-binfmts --enable
-docker version
-docker build --platform $4 -t $IMAGE_FULL --push .
+docker build buildx --platform $4 -t $IMAGE_FULL --push .
 
 # Propagate determined variables to the outer workflow
 echo ::set-output name=registry::$REGISTRY
