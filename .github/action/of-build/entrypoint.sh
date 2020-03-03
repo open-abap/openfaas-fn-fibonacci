@@ -39,7 +39,9 @@ echo $3 | docker login -u $2 --password-stdin $REGISTRY
 # Build and push
 
 cd "build/$(ls build | sed -n p)"
-docker buildx install
+docker buildx create --driver docker-container --use
+docker buildx inspect --bootstrap
+update-binfmts --enable
 docker version
 docker build --platform $4 -t $IMAGE_FULL --push .
 
