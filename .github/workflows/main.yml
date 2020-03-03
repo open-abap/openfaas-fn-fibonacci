@@ -18,27 +18,17 @@ jobs:
       - name: Install OpenFaaS CLI
         run: |
           curl -sSL https://cli.openfaas.com | sudo sh
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
+      - name: OpenFaaS build and push
+        uses: mrsimpson/action-openfaas-build@0.1.0
         with:
-          version: latest
-      - name: Install buildx as default
-        run: |
-          docker buildx install
-      - name: Available platforms
-        run: echo ${{ steps.buildx.outputs.platforms }}
-      - name: Prepare image build
-        run: |
-          echo "::set-env name=TAG::$(faas-cli build --shrinkwrap --tag sha | grep -i building | sed "s/.*$IMAGE://" | cut -f1 -d" " | sed -n 2p)"
-      - name: Login to DockerHub Registry
-        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-      - name: Build multi platform
-        working-directory: './build/abap-fibonacci/'
-        run: |
-          docker version && \
-          echo ${{ steps.buildx.outputs.platforms }} && \
-          docker build --platform linux/amd64,linux/arm/v7 -t $DOCKER_REPO/$DOCKER_IMAGE:$TAG --push .
+          # The OpenFaaS function definition file
+          stack-file: stack.yml
+          # Your docker username with push authorization
+          docker-username: ${{ secrets.DOCKER_USERNAME }}
+          # Your docker username with push authorization
+          docker-password: ${{ secrets.DOCKER_PASSWORD }}
+          # the platform abbreviations to build for, e. g. linux/amd64,linux/arm/v7
+          platforms: linux/amd64,linux/arm/v7
       - name: Login to OpenFaaS
         run: |
           echo ${{ secrets.OPENFAAS_PASSWORD }} | faas-cli login --gateway ${{ secrets.OPENFAAS_GATEWAY }} -u ${{ secrets.OPENFAAS_USERNAME }} --password-stdin
