@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: OpenFaaS build and push
-        uses: mrsimpson/action-openfaas-build@0.2.0
+        uses: mrsimpson/action-openfaas-build@master
         with:
           # The OpenFaaS function definition file
           stack-file: stack.yml
