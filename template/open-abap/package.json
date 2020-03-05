@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run build:transpile-abap",
     "build:transpile-abap": "node ./scripts/build.js",
-    "pretest": "npm run build && cp -R ../../test .",
+    "pretest": "npm run build",
     "test": "mocha"
   },
   "keywords": [],

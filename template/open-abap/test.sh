@@ -10,7 +10,10 @@ fi
 
 # Integrate the template and the function folder
 faas-cli build --shrinkwrap
+
 cd build
 cd $(ls)
 npm i
+
+cp -R ../../test .
 npm test
