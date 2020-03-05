@@ -24,8 +24,7 @@ jobs:
           docker-password: ${{ secrets.DOCKER_PASSWORD }}
           # the platform abbreviations to build for, e. g. linux/amd64,linux/arm/v7
           platforms: linux/amd64,linux/arm/v7
-          
           deploy: ${{ github.ref == 'refs/heads/master' }}
-          gateway: ${{ env.OPENFAAS_GATEWAY }}
-          openfaas-username: ${{ env.OPENFAAS_USERNAME }}
-          openfaas-password: ${{ env.OPENFAAS_PASSWORD }}
+          gateway: ${{ secrets.OPENFAAS_GATEWAY }}
+          openfaas-username: ${{ secrets.OPENFAAS_USERNAME }}
+          openfaas-password: ${{ secrets.OPENFAAS_PASSWORD }}
