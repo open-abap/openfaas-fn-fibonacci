@@ -30,10 +30,13 @@ RUN npm i
 # Trigger the transpilation
 COPY scripts ./scripts
 COPY function ./function
-RUN npm run build && rm -rf ./function
+RUN npm run build
 
 # Run any tests that may be available
 RUN npm test
+
+# Remove the original function from the image
+RUN rm -rf ./function
 
 # Set correct permissions to use non root user
 WORKDIR /home/app/
