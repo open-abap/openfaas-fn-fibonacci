@@ -1,4 +1,4 @@
-name: CI
+name: CICD
 
 on:
   push:
@@ -7,9 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -24,7 +22,11 @@ jobs:
           docker-password: ${{ secrets.DOCKER_PASSWORD }}
           # the platform abbreviations to build for, e. g. linux/amd64,linux/arm/v7
           platforms: linux/amd64,linux/arm/v7
+          # Whether the built image shall be deployed (false=no, true=yes)
           deploy: ${{ github.ref == 'refs/heads/master' }}
-          gateway: ${{ secrets.OPENFAAS_GATEWAY }}
+          # OpenFaaS gateway URL (http(s)://my-public-gateway.tld)
+          openfaas-gateway: ${{ secrets.OPENFAAS_GATEWAY }}
+          # User for authenticating at OpenFaaS gateway
           openfaas-username: ${{ secrets.OPENFAAS_USERNAME }}
+          # Password for authenticating at OpenFaaS gateway
           openfaas-password: ${{ secrets.OPENFAAS_PASSWORD }}
