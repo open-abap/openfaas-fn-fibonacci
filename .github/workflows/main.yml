@@ -1,11 +1,9 @@
 name: CI
 
-on: [push]
-env:
-  DOCKER_REPO: mrsimpson
-  DOCKER_IMAGE: abap-fibonacci
-  DOCKER_CLI_EXPERIMENTAL: enabled
-  TAG: ''
+on:
+  push:
+    paths-ignore:
+      - '**.md'
 
 jobs:
   build-and-deploy:
@@ -26,13 +24,8 @@ jobs:
           docker-password: ${{ secrets.DOCKER_PASSWORD }}
           # the platform abbreviations to build for, e. g. linux/amd64,linux/arm/v7
           platforms: linux/amd64,linux/arm/v7
-      - name: Install OpenFaaS CLI
-        run: |
-          curl -sSL https://cli.openfaas.com | sudo sh
-      - name: Login to OpenFaaS
-        run: |
-          echo ${{ secrets.OPENFAAS_PASSWORD }} | faas-cli login --gateway ${{ secrets.OPENFAAS_GATEWAY }} -u ${{ secrets.OPENFAAS_USERNAME }} --password-stdin
-      - name: deploy
-        if: success() && github.ref == 'refs/heads/master'
-        run: |
-          faas-cli deploy -g ${{ secrets.OPENFAAS_GATEWAY }} --tag sha
+          
+          deploy: ${{ github.ref == 'refs/heads/master' }}
+          gateway: ${{ env.OPENFAAS_GATEWAY }}
+          openfaas-username: ${{ env.OPENFAAS_USERNAME }}
+          openfaas-password: ${{ env.OPENFAAS_PASSWORD }}
