@@ -21,9 +21,6 @@ COPY package.json ./
 # Copy outer function handler
 COPY index.js ./
 
-# TODO: Remove workaround
-RUN npm i abaplint
-
 # Install (OpenFaaS dependencies)
 RUN npm i
 

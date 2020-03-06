@@ -13,7 +13,7 @@ describe('End-to-End: Handler', ()=>{
             .then(() => done( new Error(message) ) )
     })
     it('fib(7) === 21', async () => {
-        const response = await handler(7)
+        const response = await handler({body: "7"})
         response.result.should.equal(21)
     })
 })
