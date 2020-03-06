@@ -1,4 +1,4 @@
-name: CICD
+name: CI/CD
 
 on:
   push:
@@ -6,6 +6,14 @@ on:
       - '**.md'
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Execute tests
+        run: |
+          bash ./template/open-abap/test.sh
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:

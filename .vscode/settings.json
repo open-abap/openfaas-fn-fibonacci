@@ -1,0 +1,4 @@
+{
+    "mochaExplorer.cwd": "build/abap-fibonacci",
+    "mochaExplorer.files": "build/abap-fibonacci/test/**/*.js"
+}
