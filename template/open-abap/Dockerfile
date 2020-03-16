@@ -25,6 +25,8 @@ COPY index.js ./
 RUN npm i
 
 # Trigger the transpilation
+COPY webpack.config.js ./
+COPY abap_loader.js ./
 COPY function ./function
 RUN npm run build
 
