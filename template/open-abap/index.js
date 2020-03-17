@@ -1,6 +1,6 @@
 "use strict"
 
-import "regenerator-runtime/runtime";
+require("regenerator-runtime/runtime");
 
 const express = require('express')
 const app = express()

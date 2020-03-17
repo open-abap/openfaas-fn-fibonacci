@@ -44,7 +44,7 @@ RUN chown app:app -R /home/app \
 USER app
 
 ENV cgi_headers="true"
-ENV fprocess="node index.js"
+ENV fprocess="node build/index.js"
 ENV mode="http"
 ENV upstream_url="http://127.0.0.1:3000"
 
